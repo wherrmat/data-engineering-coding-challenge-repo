@@ -122,7 +122,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2021-04-01",
+            "apiVersion": "2023-07-01",
             "name": "[parameters('keyVaultName')]",
             "location": "[resourceGroup().location]",
             "properties": {
@@ -145,7 +145,7 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2021-04-01-preview",
+            "apiVersion": "2023-07-01",
             "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
             "properties": {
                 "value": "[parameters('secretValue')]"

@@ -1,5 +1,6 @@
 # infrastructure/api/app.py
 from flask import Flask
+
 from infrastructure.api.controllers.employee_controller import employee_blueprint
 from infrastructure.api.controllers.job_controller import job_blueprint
 from infrastructure.api.controllers.department_controller import department_blueprint
