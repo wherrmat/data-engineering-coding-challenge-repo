@@ -57,6 +57,7 @@ while ($complexPassword -ne 1)
         $complexPassword = 1
 	    Write-Output "Password $SqlPassword accepted. Make sure you remember this!"
         $secretValue = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:$sqlServerName.database.windows.net,1433;Database=$sqlDatabaseName;Uid=$sqlUser;Pwd=$SqlPassword;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+        
     }
     else
     {
@@ -64,6 +65,7 @@ while ($complexPassword -ne 1)
     }
 }
 
+$secureSecretValue = ConvertTo-SecureString $SqlPassword -AsPlainText -Force
 # Register resource providers
 Write-Host "Registering resource providers...";
 $provider_list = "Microsoft.Sql", "Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.Authorization"
@@ -109,7 +111,7 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -sqlPassword $sqlPassword `
   -keyVaultName $keyVaultName `
   -secretName $secretName `
-  -secretValue $secretValue `
+  -secretValue $secureSecretValue `
   -secretUserRoleID $secretUserRoleID `
   -objectId $objectId `
   -Force
