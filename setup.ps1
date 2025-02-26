@@ -112,7 +112,7 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -keyVaultName $keyVaultName `
   -secretName $secretName `
   -secretValue $secureSecretValue `
-  -secretUserRoleID $secretUserRoleID `
+  -userSecretRoleID $userSecretRoleID `
   -objectId $objectId `
   -Force
 

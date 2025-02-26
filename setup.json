@@ -167,9 +167,9 @@
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2020-04-01-preview",
             "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('keyVaultName'))]",
-            "name": "[guid(parameters('secretUserRoleID'), parameters('objectId'), resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')))]",
+            "name": "[guid(parameters('userSecretRoleID'), parameters('objectId'), resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')))]",
             "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('secretUserRoleID'))]",
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('userSecretRoleID'))]",
                 "principalId": "[parameters('objectId')]",
                 "principalType": "ServicePrincipal"
             },
