@@ -15,7 +15,11 @@ $containerName = "data"
 $sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
 $sqlUser = "sqladmin"
-
+$keyVaultName = "code_challenge_akv"
+$secretName = "ccsqldatabase_string_connection_secret"
+$secretValue = ""
+$userSecretRoleID = "4633458b-17de-408a-b874-0445c86b69e6" # (Key Vault Secrets User) role
+$objectId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a" # user_id for wilmeryes96@yahoo.es
 
 # Set azure subscription
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
@@ -52,6 +56,7 @@ while ($complexPassword -ne 1)
     {
         $complexPassword = 1
 	    Write-Output "Password $SqlPassword accepted. Make sure you remember this!"
+        $secretValue = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:$sqlServerName.database.windows.net,1433;Database=$sqlDatabaseName;Uid=$sqlUser;Pwd=$SqlPassword;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
     }
     else
     {
@@ -61,7 +66,7 @@ while ($complexPassword -ne 1)
 
 # Register resource providers
 Write-Host "Registering resource providers...";
-$provider_list = "Microsoft.Sql", "Microsoft.Storage"
+$provider_list = "Microsoft.Sql", "Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.Authorization"
 $maxRetries = 5
 $waittime = 30
 
@@ -102,6 +107,11 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -sqlDatabaseName $sqlDatabaseName `
   -sqlUser $sqlUser `
   -sqlPassword $sqlPassword `
+  -keyVaultName $keyVaultName `
+  -secretName $secretName `
+  -secretValue $secretValue `
+  -secretUserRoleID $secretUserRoleID `
+  -objectId $objectId `
   -Force
 
 # Upload files
@@ -117,5 +127,6 @@ Get-ChildItem "./data/*.csv" -File | Foreach-Object {
 }
 
 # Create database
+Start-Sleep -Seconds 30 # Wait for server and database
 write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql

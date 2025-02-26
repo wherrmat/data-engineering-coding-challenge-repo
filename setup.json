@@ -37,6 +37,36 @@
             "metadata": {
                 "description": "Password for SQL User"
             }
+        },
+        "keyVaultName": {
+            "type": "string",
+            "metadata": {
+                "description": "Specifies the name of the key vault."
+            }
+        },
+        "secretName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of the secret that you want to create."
+            }
+        },
+        "secretValue": {
+            "type": "securestring",
+            "metadata": {
+                "description": "Specifies the value of the secret that you want to create."
+            }
+        },
+        "userSecretRoleID": {
+            "type": "string",
+            "metadata": {
+                "description": "Role for the user to use secrets in the vault"
+            }
+        },
+        "objectId": {
+            "type": "string",
+            "metadata": {
+                "description": "Object ID of a user, service principal or security group in the tenant for the vault."
+            }
         }
     },
     "resources": [
@@ -90,17 +120,62 @@
             }
         },
         {
-          "type": "Microsoft.Sql/servers/databases",
-          "apiVersion": "2022-05-01-preview",
-          "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabaseName'))]",
-          "location": "[resourceGroup().location]",
-          "sku": {
-            "name": "Standard",
-            "tier": "Standard"
-          },
-          "dependsOn": [
-            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
-          ]
+            "type": "Microsoft.Sql/servers/databases",
+            "apiVersion": "2022-05-01-preview",
+            "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabaseName'))]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard",
+                "tier": "Standard"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2023-07-01",
+            "name": "[parameters('keyVaultName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "enableRbacAuthorization": true,
+                "tenantId": "[subscription().tenantId]",
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "sku": {
+                    "name": "Standard",
+                    "family": "A"
+                },
+                "networkAcls": {
+                    "defaultAction": "Allow",
+                    "bypass": "AzureServices"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2023-07-01",
+            "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
+            "properties": {
+                "value": "[parameters('secretValue')]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Authorization/roleAssignments",
+            "apiVersion": "2020-04-01-preview",
+            "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('keyVaultName'))]",
+            "name": "[guid(parameters('secretUserRoleID'), parameters('objectId'), resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')))]",
+            "properties": {
+                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('secretUserRoleID'))]",
+                "principalId": "[parameters('objectId')]",
+                "principalType": "ServicePrincipal"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+            ]
         }
     ],
     "outputs": {}
