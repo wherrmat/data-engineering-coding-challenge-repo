@@ -3,11 +3,15 @@ write-host "Starting deployment at $(Get-Date)"
 
 #Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
+# Generate unique random suffix
+[string]$suffix =  -join ((48..57) + (97..122) | Get-Random -Count 7 | % {[char]$_})
+Write-Host "Your randomly-generated suffix for Azure resources is $suffix"
+
 # parameters
 $resourceGroupName = "code-challenge-resource-group"
 $region = "East US"
-$storageAccountName = "ccstorageaccount"
-$sqlServerName = "ccsqlserver"
+$storageAccountName = "ccstorageaccount$suffix"
+$sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
 $sqlAdminLogin = "sqladmin"
 
@@ -96,7 +100,7 @@ New-AzStorageAccount -ResourceGroupName $resourceGroupName `
 write-host "Loading data..."
 $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
 $storageContext = $storageAccount.Context
-Get-ChildItem "./files/*.csv" -File | Foreach-Object {
+Get-ChildItem "./data/*.csv" -File | Foreach-Object {
     write-host ""
     $file = $_.Name
     Write-Host $file
