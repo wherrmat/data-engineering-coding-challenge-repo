@@ -18,8 +18,8 @@ $sqlUser = "sqladmin"
 $keyVaultName = "code-challenge-akv"
 $secretName = "ccsqldatabase-string-connection-secret"
 $secretValue = ""
-$userSecretRoleID = "4633458b-17de-408a-b874-0445c86b69e6" # (Key Vault Secrets User) role
-$objectId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a" # user_id for wilmeryes96@yahoo.es
+$azContainerRegistryName = ""
+$azContainerInstanceName = ""
 
 # Set azure subscription
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
@@ -65,7 +65,7 @@ while ($complexPassword -ne 1)
     }
 }
 
-$secureSecretValue = ConvertTo-SecureString $SqlPassword -AsPlainText -Force
+$secureSecretValue = ConvertTo-SecureString $secretValue -AsPlainText -Force
 # Register resource providers
 Write-Host "Registering resource providers...";
 $provider_list = "Microsoft.Sql", "Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.Authorization"
@@ -112,8 +112,6 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -keyVaultName $keyVaultName `
   -secretName $secretName `
   -secretValue $secureSecretValue `
-  -userSecretRoleID $userSecretRoleID `
-  -objectId $objectId `
   -Force
 
 # Upload files
@@ -132,3 +130,17 @@ Get-ChildItem "./data/*.csv" -File | Foreach-Object {
 Start-Sleep -Seconds 30 # Wait for server and database
 write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
+
+# Asign roles
+write-host "Role Assignments..."
+$keyVault = Get-AzKeyVault -VaultName $keyVaultName
+$keyVaultId = $keyVault.Id
+
+# For user
+$userId = (Get-AzADUser -UserPrincipalName (Get-AzContext).Account).Id
+New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Key Vault Administrator" -Scope $keyVaultId
+
+# For Container instance managed identity
+#$containerInstance = Get-AzContainerGroup -ResourceGroupName $resourceGroupName -Name $azContainerInstanceName
+#$containerInstanceId = $containerInstance.Identity.PrincipalId
+#New-AzRoleAssignment -ObjectId $containerInstanceId -RoleDefinitionName "Key Vault Secrets User" -Scope $keyVaultId

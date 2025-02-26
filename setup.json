@@ -55,18 +55,6 @@
             "metadata": {
                 "description": "Specifies the value of the secret that you want to create."
             }
-        },
-        "userSecretRoleID": {
-            "type": "string",
-            "metadata": {
-                "description": "Role for the user to use secrets in the vault"
-            }
-        },
-        "objectId": {
-            "type": "string",
-            "metadata": {
-                "description": "Object ID of a user, service principal or security group in the tenant for the vault."
-            }
         }
     },
     "resources": [
@@ -134,10 +122,13 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults",
-            "apiVersion": "2023-07-01",
+            "apiVersion": "2021-04-01",
             "name": "[parameters('keyVaultName')]",
             "location": "[resourceGroup().location]",
             "properties": {
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
                 "enableRbacAuthorization": true,
                 "tenantId": "[subscription().tenantId]",
                 "enableSoftDelete": true,
@@ -154,24 +145,10 @@
         },
         {
             "type": "Microsoft.KeyVault/vaults/secrets",
-            "apiVersion": "2023-07-01",
+            "apiVersion": "2021-04-01-preview",
             "name": "[format('{0}/{1}', parameters('keyVaultName'), parameters('secretName'))]",
             "properties": {
                 "value": "[parameters('secretValue')]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Authorization/roleAssignments",
-            "apiVersion": "2020-04-01-preview",
-            "scope": "[format('Microsoft.KeyVault/vaults/{0}', parameters('keyVaultName'))]",
-            "name": "[guid(parameters('userSecretRoleID'), parameters('objectId'), resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName')))]",
-            "properties": {
-                "roleDefinitionId": "[subscriptionResourceId('Microsoft.Authorization/roleDefinitions', parameters('userSecretRoleID'))]",
-                "principalId": "[parameters('objectId')]",
-                "principalType": "ServicePrincipal"
             },
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
