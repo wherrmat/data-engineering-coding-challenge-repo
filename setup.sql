@@ -4,8 +4,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[hired_employees](
 	[id] [int] NOT NULL,
-	[name] [nvarchar](100) NULL,
-	[datetime] [nvarchar](100) NULL,
+	[name] [nvarchar](200) NULL,
+	[datetime] [nvarchar](200) NULL,
 	[department_id] [int] NULL,
 	[job_id] [int] NULL
 )
