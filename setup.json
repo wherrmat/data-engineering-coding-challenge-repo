@@ -44,7 +44,7 @@
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-06-01",
             "name": "[parameters('storageAccountName')]",
-            "location": "[variables('location')]",
+            "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard_LRS"
             },
@@ -83,7 +83,7 @@
           "type": "Microsoft.Sql/servers/databases",
           "apiVersion": "2022-05-01-preview",
           "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabaseName'))]",
-          "location": "[parameters('location')]",
+          "location": "[resourceGroup().location]",
           "sku": {
             "name": "Standard",
             "tier": "Standard"
