@@ -1,0 +1,97 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccountName": {
+            "type": "String",
+            "metadata": {
+                "description": "Azure storage account name."
+            }
+        },
+        "containerName": {
+            "type": "String",
+            "metadata": {
+                "description": "Container name for storage account."
+            }
+        },
+        "sqlServerName": {
+            "type": "String",
+            "metadata": {
+                "description": "SQL server name"
+            }
+        },
+        "sqlDatabaseName": {
+            "type": "String",
+            "metadata": {
+                "description": "Name SQL database"
+            }
+        },
+        "sqlUser": {
+            "type": "String",
+            "metadata": {
+                "description": "SQL admin user name"
+            }
+        },
+        "sqlPassword": {
+            "type": "String",
+            "metadata": {
+                "description": "Password for SQL User"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2019-06-01",
+            "name": "[parameters('storageAccountName')]",
+            "location": "[variables('location')]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "accessTier": "Hot",
+                "supportsHttpsTrafficOnly": "true",
+                "isHnsEnabled": "true",
+                "largeFileSharesState": "Disabled"
+            },
+            "resources": [
+                {
+                    "type": "blobServices/containers",
+                    "apiVersion": "2018-07-01",
+                    "name": "[concat('default/', parameters('containerName'))]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName'))]"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2024-05-01-preview",
+            "name": "[parameters('sqlServerName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "administratorLogin": "[parameters('sqlUser')]",
+                "administratorLoginPassword": "[parameters('sqlPassword')]"
+            },
+            "tags": {
+                "{customized property}": "string"
+            }
+        },
+        {
+          "type": "Microsoft.Sql/servers/databases",
+          "apiVersion": "2022-05-01-preview",
+          "name": "[format('{0}/{1}', parameters('sqlServerName'), parameters('sqlDatabaseName'))]",
+          "location": "[parameters('location')]",
+          "sku": {
+            "name": "Standard",
+            "tier": "Standard"
+          },
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('sqlServerName'))]"
+          ]
+        }
+    ],
+    "outputs": {}
+}

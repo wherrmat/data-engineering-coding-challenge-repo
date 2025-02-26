@@ -11,9 +11,10 @@ Write-Host "Your randomly-generated suffix for Azure resources is $suffix"
 $resourceGroupName = "code-challenge-resource-group"
 $region = "East US"
 $storageAccountName = "ccstorageaccount$suffix"
+$containerName = "data"
 $sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
-$sqlAdminLogin = "sqladmin"
+$sqlUser = "sqladmin"
 
 
 # Set azure subscription
@@ -89,12 +90,27 @@ foreach ($provider in $provider_list) {
 Write-Host "Creating $resourceGroupName resource group in $region ..."
 New-AzResourceGroup -Name $resourceGroupName -Location $region | Out-Null
 
+# Deployment
+write-host "Creating resources in $resourceGroupName resource group..."
+write-host "This may take some time!"
+New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
+  -TemplateFile "setup.json" `
+  -Mode Complete `
+  -storageAccountName $storageAccountName `
+  -containerName $containerName `
+  -sqlServerName $sqlServerName `
+  -sqlDatabaseName $sqlDatabaseName `
+  -sqlUser $sqlUser `
+  -sqlPassword $sqlPassword `
+  -Force
+
+
 # Create storage account
-Write-Host "Creating $storageAccountName storage account ..."
-New-AzStorageAccount -ResourceGroupName $resourceGroupName `
-    -Name $storageAccountName `
-    -Location $region `
-    -SkuName Standard_LRS
+#Write-Host "Creating $storageAccountName storage account ..."
+#New-AzStorageAccount -ResourceGroupName $resourceGroupName `
+#    -Name $storageAccountName `
+#    -Location $region `
+#    -SkuName Standard_LRS
 
 # Upload files
 write-host "Loading data..."
@@ -104,20 +120,24 @@ Get-ChildItem "./data/*.csv" -File | Foreach-Object {
     write-host ""
     $file = $_.Name
     Write-Host $file
-    $blobPath = "csv/$file"
+    $blobPath = "data/$file"
     Set-AzStorageBlobContent -File $_.FullName -Container "files" -Blob $blobPath -Context $storageContext
 }
 
 # Create Azure SQL Server
-Write-Host "Creating $sqlServerName SQL server ..."
-New-AzSqlServer -ResourceGroupName $resourceGroupName `
-    -ServerName $sqlServerName `
-    -Location $region `
-    -SqlAdministratorCredentials (Get-Credential -UserName $sqlAdminLogin -Password $SqlPassword)
+#Write-Host "Creating $sqlServerName SQL server ..."
+#New-AzSqlServer -ResourceGroupName $resourceGroupName `
+#    -ServerName $sqlServerName `
+#    -Location $region `
+#    -SqlAdministratorCredentials (Get-Credential -UserName $sqlAdminLogin -Password $SqlPassword)
 
 # Create Azure SQL database
-Write-Host "Creating $sqlDatabaseName database in $sqlServerName SQL server ..."
-New-AzSqlDatabase -ResourceGroupName $resourceGroupName `
-    -ServerName $sqlServerName `
-    -DatabaseName $sqlDatabaseName `
-    -Edition Basic
+#Write-Host "Creating $sqlDatabaseName database in $sqlServerName SQL server ..."
+#New-AzSqlDatabase -ResourceGroupName $resourceGroupName `
+#    -ServerName $sqlServerName `
+#    -DatabaseName $sqlDatabaseName `
+#    -Edition Basic
+
+# Create database
+write-host "Creating the $sqlDatabaseName database..."
+sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
