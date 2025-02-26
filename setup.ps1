@@ -1,6 +1,8 @@
 Clear-Host
 write-host "Starting deployment at $(Get-Date)"
 
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
 # parameters
 $resourceGroupName = "code-challenge-resource-group"
 $region = "East US"
@@ -47,6 +49,33 @@ while ($complexPassword -ne 1)
         Write-Output "$SqlPassword does not meet the complexity requirements."
     }
 }
+
+# Register resource providers
+Write-Host "Registering resource providers...";
+$provider_list = "Microsoft.Sql", "Microsoft.Storage"
+$maxRetries = 5
+$waittime = 30
+
+foreach ($provider in $provider_list) {
+    $retryCount = 0
+    Register-AzResourceProvider -ProviderNamespace $provider
+    while ($retryCount -lt $maxRetries) {
+        $currentStatus = (Get-AzResourceProvider -ProviderNamespace $provider).RegistrationState
+        if ($currentStatus -eq "Registered") {
+            Write-Host "$provider is successfully registered."
+            break
+        }
+        else {
+            Write-Host "$provider is not yet registered. Waiting for $waitTime seconds before rechecking..."
+            Start-Sleep -Seconds $waitTime
+            $retryCount++
+        }
+    }
+    if ($retryCount -eq $maxRetries) {
+        Write-Host "Failed to register $provider after $maxRetries attempts."
+    }
+}
+
 
 # Create resource group
 Write-Host "Creating $resourceGroupName resource group in $region ..."
