@@ -1,7 +1,7 @@
 Clear-Host
 write-host "Starting deployment at $(Get-Date)"
 
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+#Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
 # parameters
 $resourceGroupName = "code-challenge-resource-group"
@@ -16,6 +16,8 @@ $sqlAdminLogin = "sqladmin"
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
 
 if ($subscriptions.Count -eq 1) {
+    Select-AzSubscription -SubscriptionId $subscriptions.Name
+    az account set --subscription $subscriptions.Name
     Write-Host "Subscription to be used for deployment: $($subscriptions.Name)"
 }
 else {
@@ -24,7 +26,9 @@ else {
         Write-Host "$($i + 1). $($subscriptions[$i].Name) (ID: $($subscriptions[$i].Id))"
     }
     $subscription_name = Read-Host "Please, type subscription name you want to use for deployment..."
-    Set-AzContext -Subscription $subscription_name
+    
+    Select-AzSubscription -SubscriptionId $subscription_name
+    az account set --subscription $subscription_name
 }
 
 # Password for the database
