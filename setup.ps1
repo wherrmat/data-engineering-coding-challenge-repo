@@ -14,7 +14,7 @@ $sqlAdminLogin = "sqladmin"
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
 
 if ($subscriptions.Count -eq 1) {
-    Write-Host "Subscription to be used for deployment: $($_.Name)"
+    Write-Host "Subscription to be used for deployment: $($subscriptions.Name)"
 }
 else {
     Write-Host "Available subscriptions" -ForegroundColor Green
@@ -48,31 +48,6 @@ while ($complexPassword -ne 1)
     }
 }
 
-# Register resource providers
-Write-Host "Registering resource providers...";
-$provider_list = "Microsoft.Sql", "Microsoft.Storage"
-$maxRetries = 5
-$waittime = 30
-
-foreach ($provider in $provider_list) {
-    $retryCount = 0
-    while ($retryCount -lt $maxRetries) {
-        $currentStatus = (Get-AzResourceProvider -ProviderNamespace $provider).RegistrationState
-        if ($currentStatus -eq "Registered") {
-            Write-Host "$provider is successfully registered."
-            break
-        }
-        else {
-            Write-Host "$provider is not yet registered. Waiting for $waitTime seconds before rechecking..."
-            Start-Sleep -Seconds $waitTime
-            $retryCount++
-        }
-    }
-    if ($retryCount -eq $maxRetries) {
-        Write-Host "Failed to register $provider after $maxRetries attempts."
-    }
-}
-
 # Create resource group
 Write-Host "Creating $resourceGroupName resource group in $region ..."
 New-AzResourceGroup -Name $resourceGroupName -Location $region | Out-Null
@@ -86,7 +61,7 @@ New-AzStorageAccount -ResourceGroupName $resourceGroupName `
 
 # Upload files
 write-host "Loading data..."
-$storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $dataLakeAccountName
+$storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
 $storageContext = $storageAccount.Context
 Get-ChildItem "./files/*.csv" -File | Foreach-Object {
     write-host ""
@@ -101,7 +76,7 @@ Write-Host "Creating $sqlServerName SQL server ..."
 New-AzSqlServer -ResourceGroupName $resourceGroupName `
     -ServerName $sqlServerName `
     -Location $region `
-    -SqlAdministratorCredentials (Get-Credential -UserName $sqlAdminLogin -Message "Ingrese la contraseña")
+    -SqlAdministratorCredentials (Get-Credential -UserName $sqlAdminLogin -Password $SqlPassword)
 
 # Create Azure SQL database
 Write-Host "Creating $sqlDatabaseName database in $sqlServerName SQL server ..."
