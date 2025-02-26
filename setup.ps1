@@ -104,14 +104,6 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -sqlPassword $sqlPassword `
   -Force
 
-
-# Create storage account
-#Write-Host "Creating $storageAccountName storage account ..."
-#New-AzStorageAccount -ResourceGroupName $resourceGroupName `
-#    -Name $storageAccountName `
-#    -Location $region `
-#    -SkuName Standard_LRS
-
 # Upload files
 write-host "Loading data..."
 $storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
@@ -120,23 +112,9 @@ Get-ChildItem "./data/*.csv" -File | Foreach-Object {
     write-host ""
     $file = $_.Name
     Write-Host $file
-    $blobPath = "data/$file"
-    Set-AzStorageBlobContent -File $_.FullName -Container "files" -Blob $blobPath -Context $storageContext
+    $blobPath = "files/$file"
+    Set-AzStorageBlobContent -File $_.FullName -Container "data" -Blob $blobPath -Context $storageContext
 }
-
-# Create Azure SQL Server
-#Write-Host "Creating $sqlServerName SQL server ..."
-#New-AzSqlServer -ResourceGroupName $resourceGroupName `
-#    -ServerName $sqlServerName `
-#    -Location $region `
-#    -SqlAdministratorCredentials (Get-Credential -UserName $sqlAdminLogin -Password $SqlPassword)
-
-# Create Azure SQL database
-#Write-Host "Creating $sqlDatabaseName database in $sqlServerName SQL server ..."
-#New-AzSqlDatabase -ResourceGroupName $resourceGroupName `
-#    -ServerName $sqlServerName `
-#    -DatabaseName $sqlDatabaseName `
-#    -Edition Basic
 
 # Create database
 write-host "Creating the $sqlDatabaseName database..."

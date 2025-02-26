@@ -73,10 +73,8 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "administratorLogin": "[parameters('sqlUser')]",
-                "administratorLoginPassword": "[parameters('sqlPassword')]"
-            },
-            "tags": {
-                "{customized property}": "string"
+                "administratorLoginPassword": "[parameters('sqlPassword')]",
+                "publicNetworkAccess": "Enabled"
             }
         },
         {
