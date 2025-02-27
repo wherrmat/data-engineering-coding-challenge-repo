@@ -11,13 +11,9 @@ Write-Host "Your randomly-generated suffix for Azure resources is $suffix"
 $subscriptionId = ""
 $resourceGroupName = "code-challenge-resource-group"
 $region = "East US"
-$storageAccountName = "ccstorageaccount$suffix"
-$containerName = "data"
 $sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
 $sqlUser = "sqladmin"
-$keyVaultName = "code-challenge-akv"
-$secretName = "ccsqldatabase-string-connection-secret"
 $secretValue = ""
 $azContainerRegistryName = ""
 $azContainerInstanceName = ""
@@ -60,7 +56,7 @@ while ($complexPassword -ne 1)
     {
         $complexPassword = 1
 	    Write-Output "Password $SqlPassword accepted. Make sure you remember this!"
-        $secretValue = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:$sqlServerName.database.windows.net,1433;Database=$sqlDatabaseName;Uid=$sqlUser;Pwd=$SqlPassword;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
+        $databaseStringConnection = "Driver={ODBC Driver 18 for SQL Server};Server=tcp:$sqlServerName.database.windows.net,1433;Database=$sqlDatabaseName;Uid=$sqlUser;Pwd=$SqlPassword;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
         
     }
     else
@@ -68,11 +64,11 @@ while ($complexPassword -ne 1)
         Write-Output "$SqlPassword does not meet the complexity requirements."
     }
 }
+$secretValue = ConvertTo-SecureString $databaseStringConnection -AsPlainText -Force
 
-$secureSecretValue = ConvertTo-SecureString $secretValue -AsPlainText -Force
 # Register resource providers
 Write-Host "Registering resource providers...";
-$provider_list = "Microsoft.Sql", "Microsoft.Storage", "Microsoft.KeyVault", "Microsoft.Authorization"
+$provider_list = "Microsoft.Sql"
 $maxRetries = 5
 $waittime = 30
 
@@ -107,45 +103,14 @@ write-host "This may take some time!"
 New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -TemplateFile "setup.json" `
   -Mode Complete `
-  -storageAccountName $storageAccountName `
-  -containerName $containerName `
   -sqlServerName $sqlServerName `
   -sqlDatabaseName $sqlDatabaseName `
   -sqlUser $sqlUser `
   -sqlPassword $sqlPassword `
-  -keyVaultName $keyVaultName `
-  -secretName $secretName `
-  -secretValue $secureSecretValue `
+  -secretValue $secretValue `
   -Force
 
-# Upload files
-write-host "Loading data..."
-$storageAccount = Get-AzStorageAccount -ResourceGroupName $resourceGroupName -Name $storageAccountName
-$storageContext = $storageAccount.Context
-Get-ChildItem "./data/*.csv" -File | Foreach-Object {
-    write-host ""
-    $file = $_.Name
-    Write-Host $file
-    $blobPath = "files/$file"
-    Set-AzStorageBlobContent -File $_.FullName -Container "data" -Blob $blobPath -Context $storageContext
-}
-
-# Create database
+# Create tables into the database
 Start-Sleep -Seconds 30 # Wait for server and database
 write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
-
-# Asign roles
-write-host "Role Assignments..."
-$keyVault = Get-AzKeyVault -VaultName $keyVaultName
-$keyVaultId = $keyVault.Id
-
-# For user
-#$myuserId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a"
-#New-AzRoleAssignment -RoleDefinitionName "Key Vault Administrator" -PrincipalId $myuserId  -Scope /subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.KeyVault/vaults/$keyVaultName/secrets/RBACSecret
-#New-AzRoleAssignment -RoleDefinitionName "Key Vault Secrets User" -PrincipalId $myuserId  -Scope /subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.KeyVault/vaults/$keyVaultName/secrets/RBACSecret
-
-# For Container instance managed identity
-#$containerInstance = Get-AzContainerGroup -ResourceGroupName $resourceGroupName -Name $azContainerInstanceName
-#$containerInstanceId = $containerInstance.Identity.PrincipalId
-#New-AzRoleAssignment -ObjectId $containerInstanceId -RoleDefinitionName "Key Vault Secrets User" -Scope $keyVaultId

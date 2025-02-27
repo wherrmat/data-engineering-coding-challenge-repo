@@ -1,4 +1,2 @@
 Flask==2.3.2
 pyodbc==5.2.0
-azure-identity
-azure-keyvault-secrets
