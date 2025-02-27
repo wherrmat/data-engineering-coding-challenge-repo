@@ -3,10 +3,13 @@ from flask import Blueprint, request, jsonify
 from app.use_cases.employee_use_cases import CreateEmployeeUseCase, GetEmployeeUseCase, DeleteEmployeeUseCase
 from infrastructure.repositories.employee_repository_impl import EmployeeRepositoryImpl
 from infrastructure.database.database import Database
+import os
 
 employee_blueprint = Blueprint('employee', __name__)
 
-database = Database()
+connection_string = os.getenv("DATABASE_STRING_ODBC_CONNECTION_STRING")
+
+database = Database(connection_string)
 employee_repository = EmployeeRepositoryImpl(database)
 create_employee_use_case = CreateEmployeeUseCase(employee_repository)
 get_employee_use_case = GetEmployeeUseCase(employee_repository)

@@ -3,10 +3,13 @@ from flask import Blueprint, request, jsonify
 from app.use_cases.job_use_cases import CreateJobUseCase, GetJobUseCase, DeleteJobUseCase
 from infrastructure.repositories.job_repository_impl import JobRepositoryImpl
 from infrastructure.database.database import Database
+import os
 
 job_blueprint = Blueprint('job', __name__)
 
-database = Database()
+connection_string = os.getenv("DATABASE_STRING_ODBC_CONNECTION_STRING")
+
+database = Database(connection_string)
 job_repository = JobRepositoryImpl(database)
 create_job_use_case = CreateJobUseCase(job_repository)
 get_job_use_case = GetJobUseCase(job_repository)

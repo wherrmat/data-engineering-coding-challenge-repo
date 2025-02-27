@@ -8,17 +8,17 @@ class JobRepositoryImpl(JobRepository):
         self.database = database
 
     def save(self, job: Job):
-        query = "INSERT INTO jobs (id, job) VALUES (%s, %s)"
-        self.database.execute(query, (job.job,))
+        query = "INSERT INTO jobs (id, job) VALUES (?, ?)"
+        self.database.execute(query, (job.id, job.job))
 
     def find_by_id(self, job_id: int) -> Job:
-        query = "SELECT id, job FROM jobs WHERE id = %s"
-        self.database.cursor.execute(query, (job_id,))
+        query = "SELECT id, job FROM jobs WHERE id = ?"
+        self.database.cursor.execute(query, (job_id))
         result = self.database.cursor.fetchone()
         if result:
             return Job(id=result[0], job=result[1])
         return None
 
     def delete(self, job_id: int):
-        query = "DELETE FROM jobs WHERE id = %s"
-        self.database.execute(query, (job_id,))
+        query = "DELETE FROM jobs WHERE id = ?"
+        self.database.execute(query, (job_id))

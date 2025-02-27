@@ -7,8 +7,8 @@ class CreateJobUseCase:
     def __init__(self, job_repository: JobRepository):
         self.job_repository = job_repository
 
-    def execute(self, title: str):
-        job = Job(id=None, title=title)
+    def execute(self, id: int, job_name: str):
+        job = Job(id=id, job=job_name)
         self.job_repository.save(job)
 
 # Get by ID

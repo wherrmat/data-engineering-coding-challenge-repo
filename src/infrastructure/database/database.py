@@ -1,37 +1,52 @@
 # infrastructure/database/database.py
 import pyodbc
-from azure.identity import DefaultAzureCredential
-from azure.identity import ManagedIdentityCredential
-from azure.keyvault.secrets import SecretClient
 
 class Database:
 
     # Connect to database
-    def __init__(self, key_vault_url, secret_name):
-        self.connection_string = self._get_connection_string_from_keyvault(key_vault_url, secret_name)   
-        
-        self.connection = pyodbc.connect(self.connection_string)
-        self.cursor = self.connection.cursor()
-    
-    # Get string connection from Azure Key Vault
-    def _get_connection_string_from_keyvault(self, key_vault_url, secret_name):
-        credential = DefaultAzureCredential()
-        credential = ManagedIdentityCredential() # Azure web service managed identity needs to be configured and role permissions granted
-        secret_client = SecretClient(vault_url=key_vault_url, credential=credential)
-        secret = secret_client.get_secret(secret_name)
-        return secret.value
+    def __init__(self, connection_string):
 
+        try:
+            self.connection = pyodbc.connect(connection_string)
+            self.cursor = self.connection.cursor()
+        except pyodbc.Error as e:
+            print(f"Connection error: {e}")
+            raise
+    
     # Execute a sql query
     def execute(self, query, params=None):
-        self.cursor.execute(query, params or ())
-        self.connection.commit()
+        try:
+            self.cursor.execute(query, params or ())
+            self.connection.commit()
+        except pyodbc.Error as e:
+            self.connection.rollback()
+            print(f"Error during query execution: {e}")
+            raise
 
     # Execute a sql query and return all rows
     def fetch_all(self, query, params=None):
-        self.cursor.execute(query, params or ())
-        return self.cursor.fetchall()
+        try:
+            self.cursor.execute(query, params or ())
+            return self.cursor.fetchall()
+        except pyodbc.Error as e:
+            print(f"Error getting rows: {e}")
+            raise
+
+    def fetch_one(self, query, params=None):
+        try:
+            self.cursor.execute(query, params or ())
+            return self.cursor.fetchone()
+        except pyodbc.Error as e:
+            print(f"Error getting row: {e}")
+            raise
 
     # Close database connection
     def close(self):
-        self.cursor.close()
-        self.connection.close()
+        try:
+            if self.cursor:
+                self.cursor.close()
+            if self.connection:
+                self.connection.close()
+        except pyodbc.Error as e:
+            print(f"Error clossing the connection: {e}")
+            raise

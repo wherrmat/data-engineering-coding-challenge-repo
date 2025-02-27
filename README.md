@@ -1,6 +1,18 @@
 # data-engineering-coding-challenge-repo
 REST API for data migration and SQL analysis
 
+## Endpoints
+
+### Jobs
+- /api/job
+
+### Departments
+- /api/department
+
+
+### Employees
+- /api/employee
+
 ## Deployment
 1. Clone the repo using next Azure PowerShell commands
     - rm -r code-challenge -f

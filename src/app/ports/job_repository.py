@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from domain.job import Job
 
 class JobRepository(ABC):
+    
     @abstractmethod
     def save(self, job: Job):
         pass

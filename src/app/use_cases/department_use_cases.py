@@ -7,8 +7,8 @@ class CreateDepartmentUseCase:
     def __init__(self, department_repository: DepartmentRepository):
         self.department_repository = department_repository
 
-    def execute(self, name: str):
-        department = Department(id=None, name=name)
+    def execute(self, id: int, department_name: str):
+        department = Department(id=id, department=department_name)
         self.department_repository.save(department)
 
 # Get by ID

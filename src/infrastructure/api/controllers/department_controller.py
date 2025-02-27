@@ -3,10 +3,13 @@ from flask import Blueprint, request, jsonify
 from app.use_cases.department_use_cases import CreateDepartmentUseCase, GetDepartmentUseCase, DeleteDepartmentUseCase
 from infrastructure.repositories.department_repository_impl import DepartmentRepositoryImpl
 from infrastructure.database.database import Database
+import os
 
 department_blueprint = Blueprint('department', __name__)
 
-database = Database()
+connection_string = os.getenv("DATABASE_STRING_ODBC_CONNECTION_STRING")
+
+database = Database(connection_string)
 department_repository = DepartmentRepositoryImpl(database)
 create_department_use_case = CreateDepartmentUseCase(department_repository)
 get_department_use_case = GetDepartmentUseCase(department_repository)
