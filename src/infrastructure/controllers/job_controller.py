@@ -11,7 +11,7 @@ if not os.path.exists(upload_folder):
 
 job_blueprint = Blueprint('job', __name__)
 
-connection_string = os.getenv("DATABASE_STRING_ODBC_CONNECTION_STRING")
+connection_string = os.getenv("DATABASE_ODBC_CONNECTION_STRING")
 database = Database(connection_string)
     
 job_repository = JobRepositoryImpl(database)

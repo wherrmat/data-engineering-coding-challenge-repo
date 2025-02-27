@@ -14,11 +14,10 @@ $region = "East US"
 $sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
 $sqlUser = "sqladmin"
-$secretValue = ""
-$containerRegistryName = "codechallengecontainerregistry"
+$containerRegistryName = "cccontainerregistry$suffix"
 $containerImageRegistryName = "ccapicr:v1"
-$containerInstanceName = "codechallengecontainerinstance"
-$containerImageName = 
+$containerInstanceName = "cccontainerinstance"
+$containerName = "cc-api-container" 
 
 # Set azure subscription
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
@@ -66,11 +65,10 @@ while ($complexPassword -ne 1)
         Write-Output "$SqlPassword does not meet the complexity requirements."
     }
 }
-$secretValue = ConvertTo-SecureString $databaseStringConnection -AsPlainText -Force
 
 # Register resource providers
 Write-Host "Registering resource providers...";
-$provider_list = "Microsoft.Sql", "Microsoft.ContainerRegistry"
+$provider_list = "Microsoft.Sql", "Microsoft.ContainerRegistry", "Microsoft.ContainerInstance"
 $maxRetries = 5
 $waittime = 30
 
@@ -109,7 +107,6 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
   -sqlDatabaseName $sqlDatabaseName `
   -sqlUser $sqlUser `
   -sqlPassword $sqlPassword `
-  -secretValue $secretValue `
   -Force
 
 # Create tables into the database
@@ -118,7 +115,19 @@ write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
 
 # Create a Container Registry
-New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRegistryName -Sku "Basic" -Location $region
+New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRegistryName -Sku "Standard" -AnonymousPullEnabled -Location $region
 
 # Build image
 az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/dockerfile" "./src"
+
+# Container instance
+$apiIpAddress = $(az container create \
+    --resource-group $resourceGroupName \
+    --name $containerInstance \
+    --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" \
+    --dns-name-label "$containerName-$containerInstanceName" \
+    --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection
+    --query "{FQDN:ipAddress.fqdn}" \
+    --output tsv)
+
+    az container create --resource-group $rg --name "cccontainerinstance" --image "$crn.azurecr.io/$crin" --env DATABASE_ODBC_CONNECTION_STRING="mystringakjs" --query "{FQDN:ipAddress.fqdn}" --output tsv

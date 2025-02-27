@@ -7,7 +7,7 @@ import os
 
 analysis_blueprint = Blueprint('analysis', __name__)
 
-connection_string = os.getenv("DATABASE_STRING_ODBC_CONNECTION_STRING")
+connection_string = os.getenv("DATABASE_ODBC_CONNECTION_STRING")
 database = Database(connection_string)
     
 analysis_repository = AnalysisRepositoryImpl(database)
