@@ -15,7 +15,7 @@ class GetEmployeesJobQuarterUseCase:
             response_items = self.analysis_repository.get_employees_job_quarter(year=year)
             
             if response_items:
-                items_list = [{"department": item.department, "department": item.department, "q1": item.q1, "q2": item.q2, "q3": item.q3, "q4": item.q4} for item in response_items]
+                items_list = [{"department": item.department, "job": item.job, "q1": item.q1, "q2": item.q2, "q3": item.q3, "q4": item.q4} for item in response_items]
                 return jsonify(items_list), 200
             else:
                 return jsonify({"error": f"No items for year {year}"}), 404

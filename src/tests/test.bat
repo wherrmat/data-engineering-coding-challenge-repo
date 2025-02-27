@@ -16,4 +16,9 @@
 ::curl -X POST -F "file=@hired_employees_test.csv" http://localhost:5000/api/employees/csvfile
 ::curl -X GET http://localhost:5000/api/employees
 ::curl -X DELETE http://localhost:5000/api/employees -H "Content-Type: application/json" -d "[2025, 2026, 2027]"
+
+:: analysis
+::curl -X GET http://localhost:5000/api/req1/2021
+curl -X GET http://localhost:5000/api/req2/2021
+
 pause
