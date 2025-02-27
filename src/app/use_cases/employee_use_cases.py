@@ -1,6 +1,6 @@
 # app/use_cases/employee_use_cases.py
-from domain.employee import Employee
-from app.ports.employee_repository import EmployeeRepository
+from domain.models.employee import Employee
+from domain.ports.employee_repository import EmployeeRepository
 
 # Create
 class CreateEmployeeUseCase:

@@ -1,6 +1,6 @@
 # infrastructure/repositories/employee_repository_impl.py
-from app.ports.employee_repository import EmployeeRepository
-from domain.employee import Employee
+from domain.ports.employee_repository import EmployeeRepository
+from domain.models.employee import Employee
 from infrastructure.database.database import Database
 
 class EmployeeRepositoryImpl(EmployeeRepository):

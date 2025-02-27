@@ -32,14 +32,6 @@ class Database:
             print(f"Error getting rows: {e}")
             raise
 
-    def fetch_one(self, query, params=None):
-        try:
-            self.cursor.execute(query, params or ())
-            return self.cursor.fetchone()
-        except pyodbc.Error as e:
-            print(f"Error getting row: {e}")
-            raise
-
     # Close database connection
     def close(self):
         try:

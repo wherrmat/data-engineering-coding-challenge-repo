@@ -1,6 +1,6 @@
 # app/ports/job_repository.py
 from abc import ABC, abstractmethod
-from domain.job import Job
+from domain.models.job import Job
 
 class JobRepository(ABC):
     

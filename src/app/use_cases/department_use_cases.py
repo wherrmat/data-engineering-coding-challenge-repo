@@ -1,28 +1,109 @@
 # app/use_cases/department_use_cases.py
-from domain.department import Department
-from app.ports.department_repository import DepartmentRepository
+from flask import Request, jsonify
+from domain.models.department import Department
+from domain.ports.department_repository import DepartmentRepository
+import os, csv
 
 # Create
-class CreateDepartmentUseCase:
+class CreateDepartmentsUseCase:
     def __init__(self, department_repository: DepartmentRepository):
         self.department_repository = department_repository
 
-    def execute(self, id: int, department_name: str):
-        department = Department(id=id, department=department_name)
-        self.department_repository.save(department)
+    def execute(self, request: Request):
+        try:
+            data = request.get_json()
+            
+            if not isinstance(data, list):
+                return jsonify({"error": "The body must be a list of departments"}), 400
+            
+            if len(data) < 1 or len(data) > 1000:
+                return jsonify({"error": "You can only insert between 1 and 1000 departments"}), 400
+            
+            for index, department in enumerate(data):
+                if 'id' not in department or 'department' not in department:
+                    return jsonify({"error": f"Department at index {index} must have 'id' and 'department' fields"}), 400
 
-# Get by ID
-class GetDepartmentUseCase:
+            for department in data:
+                self.department_repository.save(Department(id=department[0], department=department[1]))
+            
+            return jsonify({"message": "Departments succesfully created"}), 201
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+
+class LoadDepartmentsFileUseCase:
     def __init__(self, department_repository: DepartmentRepository):
         self.department_repository = department_repository
 
-    def execute(self, department_id: int):
-        return self.department_repository.find_by_id(department_id)
+    def execute(self, request: Request):
+        if 'file' not in request.files:
+            return jsonify({"error": "No file attached"}), 400
+
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({"error": "No attached file"}), 400
+
+        if file and file.filename.endswith('.csv'):
+            file_path = os.path.join(os.getenv("UPLOADS_PATH"), file.filename)
+            file.save(file_path)
+
+            try:
+                with open(file_path, newline='', encoding='utf-8') as csvfile:
+                    csvreader = csv.reader(csvfile)
+                    rows = [row for row in csvreader]
+                    csvfile.close()
+
+                    if len(rows) < 1 or len(rows) > 1000:
+                        os.remove(file_path)
+                        return jsonify({"error": "You can only attach files with 1 - 1000 records"}), 400
+                    
+                    for department in rows:
+                        if len(department) != 2:
+                            return jsonify({"error": "There are departments without all fields"}), 400
+                        
+                        self.department_repository.save(Department(id=department[0], department=department[1]))
+
+                os.remove(file_path)
+                return jsonify({"message": f"{len(rows)} rows successfully uploaded", "data": rows}), 201
+            except Exception as e:
+                os.remove(file_path)
+                return jsonify({"error": f"Error processing the CSV file: {str(e)}"}), 500
+        else:
+            return jsonify({"error": "Invalid file format. Please upload a CSV file."}), 400
+
+# Get all
+class GetDepartmentsUseCase:
+    def __init__(self, department_repository: DepartmentRepository):
+        self.department_repository = department_repository
+
+    def execute(self):
+        try:
+            departments = self.department_repository.get_all()
+            if departments:
+                departments_list = [{"id": department.id, "department": department.department} for department in departments]
+                return jsonify(departments_list), 200
+            else:
+                return jsonify({"error": "No departments"}), 404
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 # Delete
-class DeleteDepartmentUseCase:
+class DeleteDepartmentsUseCase:
     def __init__(self, department_repository: DepartmentRepository):
         self.department_repository = department_repository
 
-    def execute(self, department_id: int):
-        self.department_repository.delete(department_id)
+    def execute(self, request: Request):
+        try:
+            data = request.get_json()
+            
+            if not isinstance(data, list):
+                return jsonify({"error": "The body must be a list of department_id"}), 400
+            
+            if len(data) < 1 or len(data) > 1000:
+                return jsonify({"error": "You can only delet between 1 and 1000 departments"}), 400
+            
+            for department_id in data:
+                self.department_repository.delete(department_id)
+            
+            return jsonify({"message": "Departments succesfully deleted"}), 201
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500

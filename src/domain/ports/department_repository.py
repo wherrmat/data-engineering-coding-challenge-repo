@@ -1,6 +1,7 @@
 # app/ports/department_repository.py
 from abc import ABC, abstractmethod
-from domain.department import Department
+from domain.models.department import Department
+from typing import List
 
 class DepartmentRepository(ABC):
     @abstractmethod
@@ -8,7 +9,7 @@ class DepartmentRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, department_id: int) -> Department:
+    def get_all(self) -> List[Department]:
         pass
 
     @abstractmethod

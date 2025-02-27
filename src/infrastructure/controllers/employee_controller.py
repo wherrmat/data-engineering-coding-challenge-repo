@@ -1,7 +1,7 @@
 # infrastructure/api/controllers/employee_controller.py
 from flask import Blueprint, request, jsonify
 from app.use_cases.employee_use_cases import CreateEmployeeUseCase, GetEmployeeUseCase, DeleteEmployeeUseCase
-from infrastructure.repositories.employee_repository_impl import EmployeeRepositoryImpl
+from infrastructure.adapters.employee_repository_impl import EmployeeRepositoryImpl
 from infrastructure.database.database import Database
 import os, csv
 

@@ -1,7 +1,7 @@
 # infrastructure/api/controllers/job_controller.py
 from flask import Blueprint, request, jsonify
 from app.use_cases.job_use_cases import CreateJobUseCase, GetJobUseCase, DeleteJobUseCase
-from infrastructure.repositories.job_repository_impl import JobRepositoryImpl
+from infrastructure.adapters.job_repository_impl import JobRepositoryImpl
 from infrastructure.database.database import Database
 import os, csv
 

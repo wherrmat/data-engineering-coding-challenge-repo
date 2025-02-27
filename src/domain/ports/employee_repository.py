@@ -1,6 +1,6 @@
 # app/ports/employee_repository.py
 from abc import ABC, abstractmethod
-from domain.employee import Employee
+from domain.models.employee import Employee
 
 class EmployeeRepository(ABC):
     

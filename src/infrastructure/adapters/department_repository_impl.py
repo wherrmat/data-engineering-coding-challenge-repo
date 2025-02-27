@@ -1,7 +1,8 @@
 # infrastructure/repositories/department_repository_impl.py
-from app.ports.department_repository import DepartmentRepository
-from domain.department import Department
+from domain.ports.department_repository import DepartmentRepository
+from domain.models.department import Department
 from infrastructure.database.database import Database
+from typing import List
 
 class DepartmentRepositoryImpl(DepartmentRepository):
     def __init__(self, database: Database):
@@ -11,13 +12,10 @@ class DepartmentRepositoryImpl(DepartmentRepository):
         query = "INSERT INTO departments (id, department) VALUES (?, ?)"
         self.database.execute(query, (department.id, department.department))
 
-    def find_by_id(self, department_id: int) -> Department:
-        query = "SELECT id, department FROM departments WHERE id = ?"
-        self.database.cursor.execute(query, (department_id))
-        result = self.database.cursor.fetchone()
-        if result:
-            return Department(id=result[0], department=result[1])
-        return None
+    def get_all(self) -> List[Department]:
+        query = "SELECT id, department FROM departments"
+        result = self.database.fetch_all(query)
+        return result if result else None
 
     def delete(self, department_id: int):
         query = "DELETE FROM departments WHERE id = ?"

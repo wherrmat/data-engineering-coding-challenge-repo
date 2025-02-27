@@ -1,6 +1,6 @@
 # infrastructure/repositories/job_repository_impl.py
-from app.ports.job_repository import JobRepository
-from domain.job import Job
+from domain.ports.job_repository import JobRepository
+from domain.models.job import Job
 from infrastructure.database.database import Database
 
 class JobRepositoryImpl(JobRepository):

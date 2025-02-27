@@ -5,9 +5,9 @@ from flask import Flask
 # enviromental variables
 load_dotenv()
 
-from infrastructure.api.controllers.employee_controller import employee_blueprint
-from infrastructure.api.controllers.job_controller import job_blueprint
-from infrastructure.api.controllers.department_controller import department_blueprint
+from infrastructure.controllers.employee_controller import employee_blueprint
+from infrastructure.controllers.job_controller import job_blueprint
+from infrastructure.controllers.department_controller import department_blueprint
 
 app = Flask(__name__)
 

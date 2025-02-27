@@ -1,6 +1,6 @@
 # app/use_cases/job_use_cases.py
-from domain.job import Job
-from app.ports.job_repository import JobRepository
+from domain.models.job import Job
+from domain.ports.job_repository import JobRepository
 
 # Create
 class CreateJobUseCase:
