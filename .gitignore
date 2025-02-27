@@ -1,0 +1,13 @@
+# Python files
+__pycache__/
+*.pyc
+
+# enviromental folders
+venv/
+.env
+
+# docker ignore files
+.dockerignore
+
+# other files
+.log
