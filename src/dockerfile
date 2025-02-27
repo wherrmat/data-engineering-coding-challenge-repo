@@ -1,6 +1,9 @@
 FROM python:3.12-slim
 
-WORKDIR /app
+# For pyodbc
+ACCEPT_EULA='Y' apt-get install -y msodbcsql18 odbc-postgresql &&
+
+WORKDIR /src
 
 COPY requirements.txt .
 
@@ -12,5 +15,6 @@ COPY . .
 EXPOSE 5000
 
 ENV UPLOADS_PATH="temp"
+ENV DATABASE_ODBC_CONNECTION_STRING="Driver={ODBC Driver 18 for SQL Server};Server=tcp:ccsqlserver6r8acbg.database.windows.net,1433;Database=ccsqldatabase;Uid=sqladmin;Pwd=Synapse!96;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 
-CMD ["flask", "run", "--host=0.0.0.0"]
+CMD ["python", "app.py"]

@@ -12,6 +12,7 @@ if not os.path.exists(upload_folder):
 employee_blueprint = Blueprint('employee', __name__)
 
 connection_string = os.getenv("DATABASE_ODBC_CONNECTION_STRING")
+print(connection_string)
 database = Database(connection_string)
 
 employee_repository = EmployeeRepositoryImpl(database)

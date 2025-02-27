@@ -1,4 +1,4 @@
-# infrastructure/api/app.py
+# src/app.py
 from dotenv import load_dotenv
 from flask import Flask
 
