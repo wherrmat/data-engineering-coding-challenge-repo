@@ -19,12 +19,12 @@ class CreateDepartmentsUseCase:
             if len(data) < 1 or len(data) > 1000:
                 return jsonify({"error": "You can only insert between 1 and 1000 departments"}), 400
             
-            for index, department in enumerate(data):
-                if 'id' not in department or 'department' not in department:
+            for index, item  in enumerate(data):
+                if item[0] is None or item[1] is None:
                     return jsonify({"error": f"Department at index {index} must have 'id' and 'department' fields"}), 400
 
-            for department in data:
-                self.department_repository.save(Department(id=department[0], department=department[1]))
+            for item in data:
+                self.department_repository.save(Department(id=item[0], department=item[1]))
             
             return jsonify({"message": "Departments succesfully created"}), 201
         except Exception as e:

@@ -4,6 +4,7 @@ from domain.models.department import Department
 from typing import List
 
 class DepartmentRepository(ABC):
+    
     @abstractmethod
     def save(self, department: Department):
         pass

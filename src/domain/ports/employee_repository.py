@@ -1,6 +1,7 @@
 # app/ports/employee_repository.py
 from abc import ABC, abstractmethod
 from domain.models.employee import Employee
+from typing import List
 
 class EmployeeRepository(ABC):
     
@@ -9,7 +10,7 @@ class EmployeeRepository(ABC):
         pass
 
     @abstractmethod
-    def find_by_id(self, employee_id: int) -> Employee:
+    def get_all(self) -> List[Employee]:
         pass
 
     @abstractmethod
