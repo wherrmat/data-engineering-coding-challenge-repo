@@ -137,9 +137,9 @@ $keyVault = Get-AzKeyVault -VaultName $keyVaultName
 $keyVaultId = $keyVault.Id
 
 # For user
-$userId = (Get-AzADUser -UserPrincipalName (Get-AzContext).Account).Id
-New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Key Vault Administrator" -Scope $keyVaultId
-New-AzRoleAssignment -ObjectId $userId -RoleDefinitionName "Key Vault Secrets User" -Scope $keyVaultId # For testing
+$myuserId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a"
+New-AzRoleAssignment -ObjectId $myuserId -RoleDefinitionName "Key Vault Administrator" -Scope $keyVaultId
+New-AzRoleAssignment -ObjectId $myuserId -RoleDefinitionName "Key Vault Secrets User" -Scope $keyVaultId # For testing
 
 # For Container instance managed identity
 #$containerInstance = Get-AzContainerGroup -ResourceGroupName $resourceGroupName -Name $azContainerInstanceName
