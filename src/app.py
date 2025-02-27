@@ -11,5 +11,9 @@ app.register_blueprint(employee_blueprint, url_prefix='/api')
 app.register_blueprint(job_blueprint, url_prefix='/api')
 app.register_blueprint(department_blueprint, url_prefix='/api')
 
+#@app.route('/')
+#def index():
+#    return "Hola Mundo!"
+
 if __name__ == '__main__':
     app.run(debug=True)

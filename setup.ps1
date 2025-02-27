@@ -8,6 +8,7 @@ write-host "Starting deployment at $(Get-Date)"
 Write-Host "Your randomly-generated suffix for Azure resources is $suffix"
 
 # parameters
+$subscriptionId = ""
 $resourceGroupName = "code-challenge-resource-group"
 $region = "East US"
 $storageAccountName = "ccstorageaccount$suffix"
@@ -28,6 +29,7 @@ if ($subscriptions.Count -eq 1) {
     Select-AzSubscription -SubscriptionId $subscriptions.Name
     az account set --subscription $subscriptions.Name
     Write-Host "Subscription to be used for deployment: $($subscriptions.Name)"
+    $subscriptionId = $subscriptions.Id
 }
 else {
     Write-Host "Available subscriptions" -ForegroundColor Green
@@ -38,6 +40,8 @@ else {
     
     Select-AzSubscription -SubscriptionId $subscription_name
     az account set --subscription $subscription_name
+
+    $subscriptionId = (Get-AzSubscription | Where-Object { $_.Name -eq $subscription_name}).Id
 }
 
 # Password for the database
@@ -137,9 +141,9 @@ $keyVault = Get-AzKeyVault -VaultName $keyVaultName
 $keyVaultId = $keyVault.Id
 
 # For user
-$myuserId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a"
-New-AzRoleAssignment -ObjectId $myuserId -RoleDefinitionName "Key Vault Administrator" -Scope $keyVaultId
-New-AzRoleAssignment -ObjectId $myuserId -RoleDefinitionName "Key Vault Secrets User" -Scope $keyVaultId # For testing
+#$myuserId = "5d2454f2-5cc0-4ac7-8783-7f74c18b677a"
+#New-AzRoleAssignment -RoleDefinitionName "Key Vault Administrator" -PrincipalId $myuserId  -Scope /subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.KeyVault/vaults/$keyVaultName/secrets/RBACSecret
+#New-AzRoleAssignment -RoleDefinitionName "Key Vault Secrets User" -PrincipalId $myuserId  -Scope /subscriptions/$subscriptionId/resourcegroups/$resourceGroupName/providers/Microsoft.KeyVault/vaults/$keyVaultName/secrets/RBACSecret
 
 # For Container instance managed identity
 #$containerInstance = Get-AzContainerGroup -ResourceGroupName $resourceGroupName -Name $azContainerInstanceName
