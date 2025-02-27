@@ -15,8 +15,10 @@ $sqlServerName = "ccsqlserver$suffix"
 $sqlDatabaseName = "ccsqldatabase"
 $sqlUser = "sqladmin"
 $secretValue = ""
-$azContainerRegistryName = ""
-$azContainerInstanceName = ""
+$containerRegistryName = "codechallengecontainerregistry"
+$containerImageRegistryName = "ccapicr:v1"
+$containerInstanceName = "codechallengecontainerinstance"
+$containerImageName = 
 
 # Set azure subscription
 $subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
@@ -68,7 +70,7 @@ $secretValue = ConvertTo-SecureString $databaseStringConnection -AsPlainText -Fo
 
 # Register resource providers
 Write-Host "Registering resource providers...";
-$provider_list = "Microsoft.Sql"
+$provider_list = "Microsoft.Sql", "Microsoft.ContainerRegistry"
 $maxRetries = 5
 $waittime = 30
 
@@ -114,3 +116,9 @@ New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
 Start-Sleep -Seconds 30 # Wait for server and database
 write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
+
+# Create a Container Registry
+New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRegistryName -Sku "Basic" -Location $region
+
+# Build image
+az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/dockerfile" "./src"
