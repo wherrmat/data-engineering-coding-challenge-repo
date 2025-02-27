@@ -4,14 +4,14 @@ REST API for data migration and SQL analysis
 ## Endpoints
 
 ### Jobs
-- /api/job
+- /api/jobs/csvfile
 
 ### Departments
-- /api/department
+- /api/departments/csvfile
 
 
 ### Employees
-- /api/employee
+- /api/employees/csvfile
 
 ## Deployment
 1. Clone the repo using next Azure PowerShell commands

@@ -5,6 +5,7 @@ __pycache__/
 # enviromental folders
 venv/
 .env
+temp/
 
 # docker ignore files
 .dockerignore
