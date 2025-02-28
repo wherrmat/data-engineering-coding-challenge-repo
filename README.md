@@ -35,10 +35,8 @@ Development proccess took place in a Windows 10 environment, making use of the f
 │   │
 │   ├── app.py
 │   ├── dockerfile
-│   ├── requirements.txt
-│   └── database/
-│   └── integration_tests/
-│
+│   └── requirements.txt
+│   
 └── README.md
 ```
 
