@@ -53,7 +53,8 @@ Repo includes a ps1 file **(setup.ps1)** for automated deploying of the SQL serv
     - An active Azure Subscription
     - Basic PowerShell scripting and Git knowledge
 
-### Azure Deployment process
+### Azure Deployment process and test
+A .ps1 file was included for automated deployment and test, at the end of the correct deployment you will see each endpoint test
 
 1. Go to [Azure Portal](https://portal.azure.com/) and Log In
 2. Open Azure Cloud Shell using the button at the top-right of the azure portal and wait for successfully started.
