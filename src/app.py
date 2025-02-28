@@ -17,6 +17,11 @@ app.register_blueprint(job_blueprint, url_prefix='/api')
 app.register_blueprint(department_blueprint, url_prefix='/api')
 app.register_blueprint(analysis_blueprint, url_prefix='/api')
 
+# 
+@app.route('/')
+def hello_world():
+    print("Api en ejecución")
+    return '¡La API está funcionando correctamente!'
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-    #app.run(debug=True)
+    app.run(host='0.0.0.0', port=80)

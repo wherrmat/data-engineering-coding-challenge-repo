@@ -24,9 +24,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5000
+EXPOSE 80
 
 ENV UPLOADS_PATH="temp"
-ENV DATABASE_ODBC_CONNECTION_STRING="Driver={ODBC Driver 18 for SQL Server};Server=tcp:ccsqlserver6r8acbg.database.windows.net,1433;Database=ccsqldatabase;Uid=sqladmin;Pwd=Synapse!96;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;"
 
 CMD ["python", "app.py"]
