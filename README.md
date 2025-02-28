@@ -108,25 +108,27 @@ This API expose endpoints on Container Instance URL on **port 80** for Create, R
 ***Section 1 - API***
 
 **To write, read and delete records using a list in JSON boy request**
-http://<url-base>:80/api/employees (GET, POST, DELETE)
-http://<url-base>:80/api/departments (GET, POST, DELETE)
-http://<url-base>:80/api/jobs (GET, POST, DELETE)
+- http://<url-base>:80/api/employees (GET, POST, DELETE)
+- http://<url-base>:80/api/departments (GET, POST, DELETE)
+- http://<url-base>:80/api/jobs (GET, POST, DELETE)
 
 **To load records from a CSV files, limited to a maximum of 1000 records and at least one**
-http://<url-base>:80/api/employees/csvfile (POST)
-http://<url-base>:80/api/departments/csvfile (POST)
-http://<url-base>:80/api/jobs/csvfile (POST)
+- http://<url-base>:80/api/employees/csvfile (POST)
+- http://<url-base>:80/api/departments/csvfile (POST)
+- http://<url-base>:80/api/jobs/csvfile (POST)
 
 
 **Data Analysis Endpoints**
 
 To get data of two specific analysis. It is neccesary to provide the year you want to analyse
 
-http://<url-base>:80/api/req1/<int:year> (GET)
-- Get number of employees hired for each job and department by a year, divided by quarter.
+- http://<url-base>:80/api/req1/<int:year> (GET)
+
+Get number of employees hired for each job and department by a year, divided by quarter.
 
 ***Query for Section 2 - Requirement 1***
 
+```
 select
     d.department as department, 
     j.job as job,
@@ -139,6 +141,7 @@ join [dbo].[departments] d on e.department_id = d.id
 join [dbo].[jobs] j on e.job_id = j.id
 where year(cast(datetime as DATETIME)) = ?
 group by department, job order by department, job;
+```
 
 http://<url-base>:80/api/req2/<int:year> (GET)
 - Get a list of ids, name and number of employees hired of each department, greater than the mean of employees hired in a year for all the departments
