@@ -55,7 +55,7 @@ Repo includes a ps1 file **(setup.ps1)** for automated deploying of the SQL serv
 
 ### Azure Deployment process
 
-1. Go to [Azure Portal](https://portal.azure.com/) and SignIn
+1. Go to [Azure Portal](https://portal.azure.com/) and Log In
 2. Open Azure Cloud Shell using the button at the top-right of the azure portal and wait for successfully started.
 3. run `rm -r code-challenge -f` to remove previous folder if exists
 4. Clone this repository using `git clone https://github.com/wherrmat/data-engineering-coding-challenge-repo code-challenge`
