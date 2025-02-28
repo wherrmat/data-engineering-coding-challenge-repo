@@ -1,15 +1,13 @@
 @echo off
 
 :: URL base
-::set base_url=cc-api-container-cccontainerregistryhbfkv3u.eastus.azurecontainer.io:80
-
-curl -X GET http://20.85.165.2:5000/api/departments
+set base_url=http://cc-api-container-cccontainerregistry92i7tu6.eastus.azurecontainer.io:80
 
 :: departments
 ::curl -X POST %base_url%/api/departments -H "Content-Type: application/json" -d "[[2025,\"HR\"], [2026,\"HR2\"], [2027,\"HR3\"]]"
 ::curl -X POST -F "file=@departments.csv" %base_url%/api/departments/csvfile
 ::curl -X GET %base_url%/api/departments
-::curl -X DELETE %base_url%/api/departments -H "Content-Type: application/json" -d "[2025, 2026, 2027]"
+curl -X DELETE %base_url%/api/departments -H "Content-Type: application/json" -d "[2025, 2026, 2027]"
 
 :: jobs
 ::curl -X POST %base_url%/api/jobs -H "Content-Type: application/json" -d "[[2025,\"Job2025\"], [2026,\"Job2026\"], [2027,\"Job2027\"]]"

@@ -20,8 +20,16 @@ app.register_blueprint(analysis_blueprint, url_prefix='/api')
 # 
 @app.route('/')
 def hello_world():
-    print("Api en ejecución")
-    return '¡La API está funcionando correctamente!'
+    return '''
+        <html>
+            <head>
+                <title>cc-api</title>
+            </head>
+            <body>
+                <h1>Data Engineering Code Challenge API running successfully!</h1>
+            </body>
+        </html>
+    '''
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
