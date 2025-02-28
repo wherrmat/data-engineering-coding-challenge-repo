@@ -132,11 +132,12 @@ Start-Sleep -Seconds 10
 az container create --resource-group $resourceGroupName --name $containerName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --registry-username "registryAdmin" --registry-password $sqlPassword --dns-name-label "$containerName-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
 
 write-host "Deployment process finished!"
+Start-Sleep -Seconds 3
 
 # Tests
 write-host "Starting tests..."
-Start-Sleep -Seconds 15
-write-host "Getting container IP Address..."
+Start-Sleep -Seconds 3
+write-host "Getting container URL, IP and port..."
 $ipAddress = (az container show --resource-group $resourceGroupName --name $containerName | ConvertFrom-Json).IpAddress
 $publicIp = $ipAddress.ip
 $base_url = $ipAddress.fqdn
@@ -144,6 +145,7 @@ $port = $ipAddress.ports[0].port
 
 write-host "URL: $base_url"
 write-host "Public IP: $publicIp:$port"
+Start-Sleep -Seconds 3
 
 
 write-host "Starting test..."
