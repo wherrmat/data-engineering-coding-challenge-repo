@@ -144,7 +144,7 @@ $base_url = $ipAddress.fqdn
 $port = $ipAddress.ports[0].port
 
 write-host "URL: $base_url"
-write-host "Public IP: $publicIp:$port"
+write-host "Public IP: $($publicIp):$port"
 Start-Sleep -Seconds 3
 
 
