@@ -9,6 +9,17 @@ $databaseStringConnection = "Mystring"
 
 $akv_name = "code-challenge-api-akv"
 
+
+# Set azure subscription
+$subscriptions = Get-AzSubscription | Where-Object { $_.State -eq "Enabled" }
+
+if ($subscriptions.Count -eq 1) {
+    Select-AzSubscription -SubscriptionId $subscriptions.Name
+    az account set --subscription $subscriptions.Name
+    Write-Host "Subscription to be used for deployment: $($subscriptions.Name)"
+    $subscriptionId = $subscriptions.Id
+}
+
 az keyvault create --resource-group $resourceGroupName --name $akv_name
 
 # Create service principal, store its password in AKV (the registry *password*)
