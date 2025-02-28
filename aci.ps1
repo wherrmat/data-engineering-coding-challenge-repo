@@ -10,5 +10,4 @@ $databaseStringConnection = "Mystring"
 Connect-AzAccount
 Connect-AzContainerRegistry
 
-az container create --resource-group $resourceGroupName --name $containerInstanceName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" 
-    --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --dns-name-label "acr-tasks-$containerRegistryName" --query "{FQDN:ipAddress.fqdn}" --output table
+az container create --resource-group $resourceGroupName --name $containerInstanceName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --dns-name-label "acr-tasks-$containerRegistryName" --query "{FQDN:ipAddress.fqdn}" --output table
