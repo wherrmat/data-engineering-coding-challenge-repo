@@ -2,7 +2,7 @@
 :: departments
 ::curl -X POST http://localhost:5000/api/departments -H "Content-Type: application/json" -d "[[2025,\"HR\"], [2026,\"HR2\"], [2027,\"HR3\"]]"
 ::curl -X POST -F "file=@departments.csv" http://localhost:5000/api/departments/csvfile
-::curl -X GET http://localhost:5000/api/departments
+curl -X GET http://localhost:5000/api/departments
 ::curl -X DELETE http://localhost:5000/api/departments -H "Content-Type: application/json" -d "[2025, 2026, 2027]"
 
 :: jobs
@@ -19,6 +19,6 @@
 
 :: analysis
 ::curl -X GET http://localhost:5000/api/req1/2021
-curl -X GET http://localhost:5000/api/req2/2021
+::curl -X GET http://localhost:5000/api/req2/2021
 
 pause
