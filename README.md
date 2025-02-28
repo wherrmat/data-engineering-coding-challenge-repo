@@ -11,6 +11,37 @@ Development proccess took place in a Windows 10 environment, making use of the f
     - Flask 2.3.2
     - Docker
 
+## Project architechture
+**![screenshot](/arch.png)**
+
+## API bsed on Hexagonal architechture
+
+```
+.
+├── src/ 
+│   ├── domain/
+│   │   ├── models/
+│   │   └── ports/
+│   │
+│   ├── app/
+│   │   └── use_cases/
+│   │
+│   ├── infrastructure/ 
+│   │   ├── adapters/
+│   │   ├── controllers/
+│   │   └── database/
+│   │
+│   ├── tests/
+│   │
+│   ├── app.py
+│   ├── dockerfile
+│   ├── requirements.txt
+│   └── database/
+│   └── integration_tests/
+│
+└── README.md
+```
+
 ## Deploy using Azure Cloud Services
 Repo includes a ps1 file **(setup.ps1)** for automated deploying of the SQL server and database, Container registration and building using Azure services and tools like:
     
@@ -78,20 +109,22 @@ This API expose endpoints on Container Instance URL on **port 80** for Create, R
 
 ***Section 1 - API***
 
-To write, read and delete records using a list in JSON boy request
-### http://<url-base>:80/api/employees (GET, POST, DELETE)
-### http://<url-base>:80/api/departments (GET, POST, DELETE)
-### http://<url-base>:80/api/jobs (GET, POST, DELETE)
+**To write, read and delete records using a list in JSON boy request**
+http://<url-base>:80/api/employees (GET, POST, DELETE)
+http://<url-base>:80/api/departments (GET, POST, DELETE)
+http://<url-base>:80/api/jobs (GET, POST, DELETE)
 
-To load records from a CSV files, limited to a maximum of 1000 records and at least one
-### http://<url-base>:80/api/employees/csvfile (POST)
-### http://<url-base>:80/api/departments/csvfile (POST)
-### http://<url-base>:80/api/jobs/csvfile (POST)
+**To load records from a CSV files, limited to a maximum of 1000 records and at least one**
+http://<url-base>:80/api/employees/csvfile (POST)
+http://<url-base>:80/api/departments/csvfile (POST)
+http://<url-base>:80/api/jobs/csvfile (POST)
+
 
 **Data Analysis Endpoints**
+
 To get data of two specific analysis. It is neccesary to provide the year you want to analyse
 
-### http://<url-base>:80/api/req1/<int:year> (GET)
+http://<url-base>:80/api/req1/<int:year> (GET)
 - Get number of employees hired for each job and department by a year, divided by quarter.
 
 ***Query for Section 2 - Requirement 1***
@@ -109,11 +142,12 @@ join [dbo].[jobs] j on e.job_id = j.id
 where year(cast(datetime as DATETIME)) = ?
 group by department, job order by department, job;
 
-### http://<url-base>:80/api/req2/<int:year> (GET)
+http://<url-base>:80/api/req2/<int:year> (GET)
 - Get a list of ids, name and number of employees hired of each department, greater than the mean of employees hired in a year for all the departments
 
 ***Query for Section 2 - Requirement 2***
 
+```
 with employees_count as (
     select department_id, count(id) as num_employees
     from [dbo].[hired_employees]
@@ -132,6 +166,7 @@ cross join average_hired ah
 join [dbo].[departments] d on ec.department_id=d.id
 where ec.num_employees > ah.mean_hired
 order by ec.num_employees desc;
+```
 
 **CURL query models**
 Consider the path to csv local files "file=@path/file.csv"
@@ -157,3 +192,9 @@ curl -X DELETE %base_url%/api/departments -H "Content-Type: application/json" -d
 ### analysis
 - curl -X GET %base_url%/api/req1/2021
 - curl -X GET %base_url%/api/req2/2021
+
+## Contact
+
+**If you have any questions or suggestions, please contact me:**
+
+- email: [wilmeryes96@yahoo.es]
