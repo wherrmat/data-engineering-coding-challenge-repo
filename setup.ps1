@@ -128,6 +128,7 @@ az acr build --registry $containerRegistryName --image $containerImageRegistryNa
 Start-Sleep -Seconds 30
 write-host "Creating the $containerName container..."
 Connect-AzContainerRegistry -Name $containerRegistryName
+Start-Sleep -Seconds 10
 az container create --resource-group $resourceGroupName --name $containerName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --registry-username "registryAdmin" --registry-password $sqlPassword --dns-name-label "$containerName-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
 
 Start-Sleep -Seconds 30
