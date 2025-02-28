@@ -131,3 +131,4 @@ $apiIpAddress = $(az container create \
     --output tsv)
 
     az container create --resource-group $rg --name "cccontainerinstance" --image "$crn.azurecr.io/$crin" --env DATABASE_ODBC_CONNECTION_STRING="mystringakjs" --query "{FQDN:ipAddress.fqdn}" --output tsv
+    New-AzContainerInstance -ResourceGroupName "myResourceGroup" -Name "myContainerInstance" -Image "nginx" -Location "East US" -Cpu 1 -MemoryInGb 1 -OsType Linux -Ports 80

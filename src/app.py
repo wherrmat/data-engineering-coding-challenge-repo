@@ -18,5 +18,5 @@ app.register_blueprint(department_blueprint, url_prefix='/api')
 app.register_blueprint(analysis_blueprint, url_prefix='/api')
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=5000)
     #app.run(debug=True)
