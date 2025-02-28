@@ -118,7 +118,7 @@ sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $
 New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRegistryName -Sku "Standard" -AnonymousPullEnabled -Location $region
 
 # Build image
-az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/dockerfile" "./src"
+az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/Dockerfile" "./src"
 
 # Container instance
 $apiIpAddress = $(az container create \
