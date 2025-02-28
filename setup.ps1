@@ -115,11 +115,19 @@ write-host "Creating the $sqlDatabaseName database..."
 sqlcmd -S "$sqlServerName.database.windows.net" -U $sqlUser -P $sqlPassword -d $sqlDatabaseName -I -i setup.sql
 
 # Create a Container Registry
+Start-Sleep -Seconds 30
+write-host "Creating the $containerRegistryName container registry..."
 New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRegistryName -Sku "Standard" -AnonymousPullEnabled -Location $region
 
 # Build image
+Start-Sleep -Seconds 30
+write-host "Starting image deployment to the $containerRegistryName container registry..."
 az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/Dockerfile" "./src"
 
 # Container instance
-Connect-AzContainerRegistry $containerRegistryName
-az container create --resource-group $resourceGroupName --name "acr-tasks" --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "acr-tasks-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
+Start-Sleep -Seconds 30
+write-host "Creating the $containerName container..."
+Connect-AzContainerRegistry -Name $containerRegistryName
+az container create --resource-group $resourceGroupName --name $containerName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "$containerName-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
+
+write-host "Deployment process finished, use the previous URL as url-base to access to the API"
