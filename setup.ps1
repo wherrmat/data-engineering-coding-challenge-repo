@@ -121,14 +121,5 @@ New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRe
 az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/Dockerfile" "./src"
 
 # Container instance
-$apiIpAddress = $(az container create \
-    --resource-group $resourceGroupName \
-    --name $containerInstance \
-    --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" \
-    --dns-name-label "$containerName-$containerInstanceName" \
-    --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection
-    --query "{FQDN:ipAddress.fqdn}" \
-    --output tsv)
-
-    az container create --resource-group $rg --name "cccontainerinstance" --image "$crn.azurecr.io/$crin" --env DATABASE_ODBC_CONNECTION_STRING="mystringakjs" --query "{FQDN:ipAddress.fqdn}" --output tsv
-    New-AzContainerInstance -ResourceGroupName "myResourceGroup" -Name "myContainerInstance" -Image "nginx" -Location "East US" -Cpu 1 -MemoryInGb 1 -OsType Linux -Ports 80
+Connect-AzContainerRegistry $containerRegistryName
+az container create --resource-group $resourceGroupName --name "acr-tasks" --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "acr-tasks-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
