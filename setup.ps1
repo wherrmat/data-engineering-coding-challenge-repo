@@ -122,12 +122,13 @@ New-AzContainerRegistry -ResourceGroupName $resourceGroupName -Name $containerRe
 # Build image
 Start-Sleep -Seconds 30
 write-host "Starting image deployment to the $containerRegistryName container registry..."
-az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/Dockerfile" "./src"
+az acr build --registry $containerRegistryName --image $containerImageRegistryName --file "./src/dockerfile" "./src"
 
 # Container instance
 Start-Sleep -Seconds 30
 write-host "Creating the $containerName container..."
 Connect-AzContainerRegistry -Name $containerRegistryName
-az container create --resource-group $resourceGroupName --name $containerName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "$containerName-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
+az container create --resource-group $resourceGroupName --name $containerName --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --registry-username "registryAdmin" --registry-password $sqlPassword --dns-name-label "$containerName-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
 
-write-host "Deployment process finished, use the previous URL as url-base to access to the API"
+Start-Sleep -Seconds 30
+write-host "Deployment process finished! use the previous URL as url-base to access to the API"
