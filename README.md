@@ -54,7 +54,7 @@ Repo includes a ps1 file **(setup.ps1)** for automated deploying of the SQL serv
     - Basic PowerShell scripting and Git knowledge
 
 ### Azure Deployment process and test
-A .ps1 file was included for automated deployment and test, at the end of the correct deployment you will see each endpoint test
+A .ps1 file was included for automated deployment and test, at the end of the correct deployment you will see each endpoint test.
 
 1. Go to [Azure Portal](https://portal.azure.com/) and Log In
 2. Open Azure Cloud Shell using the button at the top-right of the azure portal and wait for successfully started.
@@ -62,6 +62,8 @@ A .ps1 file was included for automated deployment and test, at the end of the co
 4. Clone this repository using `git clone https://github.com/wherrmat/data-engineering-coding-challenge-repo code-challenge`
 5. Move to the main directory using `cd code-challenge`
 6. Run the automated deployment using `./setup.ps1`
+7. If you want to re-run test, use `./src/tests/azure-powershell-test.ps1`
+8. A .bat file was included in ./src/tests/ with some CURL queries you can use for testing the API
 
 Deployment proccess will take some time, you will be able to se some outputs with status, please, note the following:
     
