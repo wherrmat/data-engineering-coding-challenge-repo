@@ -62,8 +62,11 @@ A .ps1 file was included for automated deployment and test, at the end of the co
 4. Clone this repository using `git clone https://github.com/wherrmat/data-engineering-coding-challenge-repo code-challenge`
 5. Move to the main directory using `cd code-challenge`
 6. Run the automated deployment using `./setup.ps1`
-7. If you want to re-run test, use `./src/tests/azure-powershell-test.ps1`
-8. A .bat file was included in ./src/tests/ with some CURL queries you can use for testing the API
+7. Await for the deployment process
+8. After deployment process, then an automated test will take place
+9. At the end of the test process you will see the public IP for API use
+10. If you want to re-run test, use `./src/tests/azure-powershell-test.ps1`
+11. A .bat file was included in ./src/tests/ with some CURL queries you can use for testing the API
 
 Deployment proccess will take some time, you will be able to se some outputs with status, please, note the following:
     

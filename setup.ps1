@@ -317,4 +317,12 @@ Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get | Co
 write-host "Section 2 - Requirement 2"
 Start-Sleep -Seconds 3
 write-host Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get
-Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get | ConvertFrom-Json
+Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req2/2021" -Method Get | ConvertFrom-Json
+
+
+write-host "Test Finished!"
+
+write-host "API URL info"
+write-host "URL: $baseUrl"
+write-host "Public IP: $publicIp"
+write-host "Port: $port"

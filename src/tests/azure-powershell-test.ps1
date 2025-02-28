@@ -184,5 +184,5 @@ Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get | Co
 # Section 2 - Requirement 1
 write-host "Section 2 - Requirement 2"
 Start-Sleep -Seconds 3
-write-host Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get
-Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req1/2021" -Method Get | ConvertFrom-Json
+write-host Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req2/2021" -Method Get
+Invoke-WebRequest -Uri "http://$($baseUrl):$port/api/req2/2021" -Method Get | ConvertFrom-Json
