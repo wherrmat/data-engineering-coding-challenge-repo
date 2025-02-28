@@ -21,4 +21,4 @@ if ($subscriptions.Count -eq 1) {
 }
 
 Connect-AzContainerRegistry
-az container create --resource-group $resourceGroupName --name "acr-tasks" --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "acr-tasks-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --ram 1 --query "{FQDN:ipAddress.fqdn}" --output table
+az container create --resource-group $resourceGroupName --name "acr-tasks" --image "$containerRegistryName.azurecr.io/$containerImageRegistryName" --dns-name-label "acr-tasks-$containerRegistryName" --env DATABASE_ODBC_CONNECTION_STRING=$databaseStringConnection --os-type "Linux" --cpu 1 --memory 1 --query "{FQDN:ipAddress.fqdn}" --output table
