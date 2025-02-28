@@ -122,9 +122,10 @@ This API expose endpoints on Container Instance URL on **port 80** for Create, R
 
 To get data of two specific analysis. It is neccesary to provide the year you want to analyse
 
-- http://<url-base>:80/api/req1/<int:year> (GET)
 
-Get number of employees hired for each job and department by a year, divided by quarter.
+**Get number of employees hired for each job and department by a year, divided by quarter.**
+
+- http://<url-base>:80/api/req1/<int:year> (GET)
 
 ***Query for Section 2 - Requirement 1***
 
@@ -143,8 +144,10 @@ where year(cast(datetime as DATETIME)) = ?
 group by department, job order by department, job;
 ```
 
-http://<url-base>:80/api/req2/<int:year> (GET)
-- Get a list of ids, name and number of employees hired of each department, greater than the mean of employees hired in a year for all the departments
+
+**Get a list of ids, name and number of employees hired of each department, greater than the mean of employees hired in a year for all the departments**
+
+- http://<url-base>:80/api/req2/<int:year> (GET)
 
 ***Query for Section 2 - Requirement 2***
 
@@ -173,10 +176,13 @@ order by ec.num_employees desc;
 Consider the path to csv local files "file=@path/file.csv"
 
 ### departments
-- curl -X POST %base_url%/api/departments -H "Content-Type: application/json" -d "[[2025,\"HR\"], [2026,\"HR2\"], [2027,\"HR3\"]]"
-- curl -X POST -F "file=@departments.csv" %base_url%/api/departments/csvfile
-- curl -X GET %base_url%/api/departments
+
+```
+curl -X POST %base_url%/api/departments -H "Content-Type: application/json" -d "[[2025,\"HR\"], [2026,\"HR2\"], [2027,\"HR3\"]]"
+curl -X POST -F "file=@departments.csv" %base_url%/api/departments/csvfile
+curl -X GET %base_url%/api/departments
 curl -X DELETE %base_url%/api/departments -H "Content-Type: application/json" -d "[2025, 2026, 2027]"
+```
 
 ### jobs
 - curl -X POST %base_url%/api/jobs -H "Content-Type: application/json" -d "[[2025,\"Job2025\"], [2026,\"Job2026\"], [2027,\"Job2027\"]]"
