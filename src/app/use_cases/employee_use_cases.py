@@ -4,7 +4,6 @@ from domain.models.employee import Employee
 from domain.ports.employee_repository import EmployeeRepository
 import os, csv
 
-
 # Create
 class CreateEmployeesUseCase:
     def __init__(self, employee_repository: EmployeeRepository):

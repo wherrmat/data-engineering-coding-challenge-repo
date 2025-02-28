@@ -1,5 +1,5 @@
 # infrastructure/api/controllers/employee_controller.py
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.use_cases.employee_use_cases import CreateEmployeesUseCase, LoadEmployeesFileUseCase, GetEmployeesUseCase, DeleteEmployeesUseCase
 from infrastructure.adapters.employee_repository_impl import EmployeeRepositoryImpl
 from infrastructure.database.database import Database
@@ -14,7 +14,7 @@ employee_blueprint = Blueprint('employee', __name__)
 connection_string = os.getenv("DATABASE_ODBC_CONNECTION_STRING")
 database = Database(connection_string)
 
-employee_repository = EmployeeRepositoryImpl(Database)
+employee_repository = EmployeeRepositoryImpl(database)
 
 create_employees_use_case = CreateEmployeesUseCase(employee_repository)
 load_employees_file_use_case = LoadEmployeesFileUseCase(employee_repository)

@@ -5,7 +5,6 @@ class Database:
 
     # Connect to database
     def __init__(self, connection_string):
-
         try:
             self.connection = pyodbc.connect(connection_string)
             self.cursor = self.connection.cursor()
